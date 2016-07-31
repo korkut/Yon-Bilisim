@@ -4,12 +4,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.widget.Toast;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -39,25 +38,21 @@ public class MainActivity extends AppCompatActivity {
         NetworkInfo netInfo = connManager.getActiveNetworkInfo();
         if (netInfo != null && netInfo.isConnectedOrConnecting()) {
             WebView webView = (WebView) findViewById(R.id.webView);
-            webView.getSettings().setJavaScriptEnabled(true);//dd
+            webView.getSettings().setJavaScriptEnabled(true);
             webView.loadUrl("http://www.yonbilisim.com/"); // acilacak URL
 
             // giris bekletme bildirimi
-            final ProgressDialog progress = ProgressDialog.show(this, "", "Sayfa Yükleniyor...", true);
-            progress.show();
+            final ProgressDialog progress = ProgressDialog.show(this, "", "Sayfa Yükleniyor...", true, true);
 
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable(){
+            webView.setWebViewClient(new WebViewClient() {
                 @Override
-                public void run(){
-                    progress.dismiss();
+                public void onPageStarted(WebView view, String url, Bitmap favicon){
+                    progress.show();
                 }
-            }, 3000);
 
-            webView.setWebViewClient(new WebViewClient() {// sayesinde tarayıcıda açılmıyor
                 @Override
                 public void onPageFinished(WebView view, String url) {
-                    Toast.makeText(getApplicationContext(), "Sayfa yüklendi", Toast.LENGTH_SHORT).show();
+                    progress.dismiss();
                 }
             });
         }

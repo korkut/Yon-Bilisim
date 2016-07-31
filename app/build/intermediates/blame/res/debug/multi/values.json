@@ -3603,11 +3603,11 @@
                 "from": {
                     "file": "C:\\Users\\asus\\AndroidStudioProjects\\YonBilisim\\app\\src\\main\\res\\values\\styles.xml",
                     "position": {
-                        "startLine": 15,
+                        "startLine": 16,
                         "startColumn": 4,
-                        "startOffset": 526,
+                        "startOffset": 528,
                         "endColumn": 80,
-                        "endOffset": 602
+                        "endOffset": 604
                     }
                 }
             },
