@@ -4,6 +4,12 @@
     tools:context="com.yonbilisim.app.MainActivity">
 
     <item
+        android:id="@+id/action_offline"
+        android:title="Çevrimdışı Mod(KAPALI)"
+        app:showAsAction="never"
+        />
+
+    <item
         android:id="@+id/action_share"
         android:icon="@drawable/share"
         android:title="@string/action_share"

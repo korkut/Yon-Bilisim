@@ -11,10 +11,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
+
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -27,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
      */
     protected GoogleApiClient client;
 
+    WebView webView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,19 +39,20 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        webView = (WebView) findViewById(R.id.webView);
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = connManager.getActiveNetworkInfo();
         if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-            WebView webView = (WebView) findViewById(R.id.webView);
             webView.getSettings().setJavaScriptEnabled(true);
+            webView.getSettings().setAppCacheEnabled(true);
             webView.loadUrl("http://www.yonbilisim.com/"); // acilacak URL
 
             // giris bekletme bildirimi
             final ProgressDialog progress = ProgressDialog.show(this, "", "Sayfa Yükleniyor...", true, true);
 
-            webView.setWebViewClient(new WebViewClient() {
+            webView.setWebViewClient(new WebViewClient() { //sayesinde linkler uygulama icerisinde aciliyor
                 @Override
-                public void onPageStarted(WebView view, String url, Bitmap favicon){
+                public void onPageStarted(WebView view, String url, Bitmap favicon) {
                     progress.show();
                 }
 
@@ -55,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
                     progress.dismiss();
                 }
             });
-        }
-        else{
-            new AlertDialog.Builder(this).setTitle("Bağlantı hatası").setMessage("İnternet bağlantınızı kontrol ediniz.").show();
+        } else {
+            new AlertDialog.Builder(this).setTitle("Çevrimdışı Mod").setMessage("Çevrimdışı sitemiz açılacaktır.").show();
+            webView.loadUrl("file:///android_asset/web/index.html");
         }
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -84,12 +90,32 @@ public class MainActivity extends AppCompatActivity {
             System.exit(0);
             return true;
         }
-        if (id == R.id.action_share){
+        if (id == R.id.action_share) {
             Intent share = new Intent(Intent.ACTION_SEND);
             share.setType("text/plain");
             share.putExtra(Intent.EXTRA_TEXT, "http://www.yonbilisim.com/");
             startActivity(Intent.createChooser(share, "Paylaş:"));
             return true;
+        }
+
+        if (id == R.id.action_offline) {
+            if (item.getTitle().equals("Çevrimdışı Mod(KAPALI)")){
+                webView.loadUrl("file:///android_asset/web/index.html");
+                item.setTitle("Çevrimdışı Mod(AÇIK)");
+                Toast.makeText(this, "Çevrimdışı Mod AÇIK", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo netInfo = connManager.getActiveNetworkInfo();
+                if (netInfo != null && netInfo.isConnectedOrConnecting()){
+                    webView.loadUrl("http://www.yonbilisim.com/");
+                    item.setTitle("Çevrimdışı Mod(KAPALI)");
+                    Toast.makeText(this, "Çevrimdışı Mod KAPALI", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    new AlertDialog.Builder(this).setTitle("İnternet Bağlantısı Bulunamadı").setMessage("Çevrimdışı Modda devam edilecek").show();
+                }
+            }
         }
 
         return super.onOptionsItemSelected(item);
