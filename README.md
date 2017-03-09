@@ -1,1 +1,1 @@
-Yön Bilişim için hazırlanmış android uygulamasıdır
+Çevrimiçi veya çevrimdışı web sitesi görüntülemeye yarayan android projesi
